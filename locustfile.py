@@ -6,21 +6,21 @@ import string
 class UserBehavior(HttpUser):
     wait_time = between(0.5, 2.5)
 
-    @task
+    @task(5)
     def create_item(self):
         item_name = ''.join(random.choices(string.ascii_letters, k=10))
         item_price = random.randint(1, 1000)
         self.client.post("/item", json={'name': item_name, 'price': item_price})
 
-    @task
+    @task(1)
     def get_items(self):
         self.client.get("/item/all")
 
-    @task
+    @task(4)
     def perform_order_operations(self):
         order = {'items': []}
         for i in range(1, random.randint(1, 5)):
-            order['items'].append({'id': random.randint(1, 100), 'quantity': random.randint(1, 10)})
+            order['items'].append({'id': random.randint(1, 100), 'quantity': 1})
 
         response = self.create_order(order)
         if response:
